@@ -2,6 +2,7 @@ from sys import argv
 import rtmidi_python as rtmidi
 import time
 import serial
+from random import uniform 
 import argparse
 
 parser=argparse.ArgumentParser(					# usage documentation
@@ -29,7 +30,8 @@ print "Bin Size: %d" %bin_size
 
 #for args in argv[3:]:	#read all command line arguments (notes) after the script name itself
 while (1):
-	z = (ser.readline()) 
+	ser.write("t")
+	z = float(ser.readline().rstrip()) 
 
 	#There's probably a much better way to do this: (To be examined)
 
