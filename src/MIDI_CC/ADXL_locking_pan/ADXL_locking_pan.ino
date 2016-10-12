@@ -192,31 +192,17 @@ void loop(void)
      
      if(count%2==0)
       serialcomm(event.acceleration.z, xreading, count);
-     /*{//if switch is not pressed or pressed even number of times then send the values according to accelerometer z values
-        Serial.print(event.acceleration.z);
-        Serial.print(" ");
-        Serial.print(xreading);
-        Serial.print(" ");
-        Serial.println(count);
-     }
-     */
+      //if switch is not pressed or pressed even number of times then send the values according to accelerometer z values
      
-    else
+     else
         serialcomm(zreading,xreading,count);
-      /*{//if button is presssed once or odd numberof times then send the value of reading when it is pressed(zreading)
-      Serial.print(zreading); 
-      Serial.print(" ");
-      Serial.print(xreading);
-      Serial.print(" ");
-      Serial.println(count);
-      }
-      */
       
       delay(400);
-   /*MESSAGE FROM ARDUINO TO COM PORT IS IN  THE FORM OF a string "zvalue<space>xvalue<space>count<newline character>"
-    In python I used a function called split() which will split a string in substrings whereever it sees a whitespace character...and puts all substrings in a list
-    eg:if my msg is "-10 10 2\n" then in pyhon read it using readline() and stored it in a variable called reading
-    reading=readin.split() gives me the list reading containing the substrings "-10" and "10" and "2" 
+   /* Arduino Packet Syntax:  "zvalue <space> xvalue <space> count <newline character> "
+    Split() method was used in Python to generate a list "zvalue, xvalue, count"
+    reading= ser.readline.rstrip().split()
+    print reading 
+    will give output "-10, 10, 2" 
     */
     
   
