@@ -4,21 +4,25 @@ import serial
 import rtmidi_python as rtmidi
 import time
 
-com_port=argv[1]
+
 midi_out = rtmidi.MidiOut()
 midi_out.open_port(0)
 
 if(len(argv)<3):
     print("Usage- python %s COM_PORT note1 [note2 note3 ...]"%(argv[0]))
     exit(0)
-print "Using COM port- " + com_port
+
 notes=[]
 for note in argv[2:]:       # append all notes (params) passed in command line
     notes.append(note)
 print "Notes- "+ str(notes)
 
+com_port=argv[1]
+print "Using COM port- " + com_port
 ser = serial.Serial(com_port, 9600)
 #ser.reset_input_buffer()
+
+
 
 accelerometer_range=23.0    #range of values which adxl sends = 11 - (-11) +1
 no_bins=len(argv)-2         #remove script name and com port number
@@ -68,4 +72,4 @@ while(1):
 
 #Terminal Commands:
 #cd C:\Users\Aniket\Documents\Projects\Technites\Glove 2.0 (navigate to where this code is locally)
-#python accelerometer.py COM3 60 62 65 67 72
+#python accelerometer_locking_pan.py COM3 60 62 65 67 72

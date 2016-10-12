@@ -27,7 +27,7 @@ Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(12345);
 
 #define OFF 0x80
 #define ON 0x90
-#define locknote 12
+#define lockpin 12
 int prev=0;
 int z;
 int flag=0;
@@ -146,7 +146,7 @@ void setup(void)
   while (!Serial); 
 #endif
   Serial.begin(9600);
-  pinMode(lockpin,INPUT);
+  pinMode(lockpin,INPUT_PULLUP);
   //Serial.println("Accelerometer Test"); Serial.println("");
   
   /* Initialise the sensor */
@@ -183,28 +183,35 @@ void loop(void)
   //Serial.print("Y: "); Serial.print(event.acceleration.y); Serial.print("  ");
   //Serial.print("Z: "); Serial.print(event.acceleration.z); Serial.print("  ");Serial.println("m/s^2 ");
   
-  if(digitalRead(lockpin)==HIGH){
+  if(digitalRead(lockpin)==LOW){
       count=count+1 ;
       zreading=event.acceleration.z;//value of z-acceleration when the button is pressed
-     else
+  }
+  else
       count=count;
-       
+     
      if(count%2==0)
-     {//if switch is not pressed or pressed even number of times then send the values according to accelerometer z values
+      serialcomm(event.acceleration.z, xreading, count);
+     /*{//if switch is not pressed or pressed even number of times then send the values according to accelerometer z values
         Serial.print(event.acceleration.z);
         Serial.print(" ");
         Serial.print(xreading);
         Serial.print(" ");
         Serial.println(count);
      }
+     */
+     
     else
-      {//if button is presssed once or odd numberof times then send the value of reading when it is pressed(zreading)
+        serialcomm(zreading,xreading,count);
+      /*{//if button is presssed once or odd numberof times then send the value of reading when it is pressed(zreading)
       Serial.print(zreading); 
       Serial.print(" ");
       Serial.print(xreading);
       Serial.print(" ");
       Serial.println(count);
       }
+      */
+      
       delay(400);
    /*MESSAGE FROM ARDUINO TO COM PORT IS IN  THE FORM OF a string "zvalue<space>xvalue<space>count<newline character>"
     In python I used a function called split() which will split a string in substrings whereever it sees a whitespace character...and puts all substrings in a list
@@ -213,7 +220,15 @@ void loop(void)
     */
     
   
-  
+
 }
 
+void serialcomm(int zvalue, int xvalue, int count)
+{
+      Serial.print(zvalue); 
+      Serial.print(" ");
+      Serial.print(xvalue);
+      Serial.print(" ");
+      Serial.println(count);
+}
 
