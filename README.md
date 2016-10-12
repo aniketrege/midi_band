@@ -13,3 +13,12 @@ Processing is done in Python via PySerial wherever possible, to avoid load on th
 computing device. 
 
 Welcome again, and enjoy your musical experience with MIDI Band! 
+
+MIDI FLUTE
+
+This instrument sounds almost similar to its acoustic counterpart thanks to MIDI CC messages that
+controls the volume of the flute based on the intensity of the blow on the flute. On the software side
+FL Studio is used for processing MIDI messages and hairless midi and loopMIDI for interfacing COM 
+port with FL Studio. On the other side of COM port sits the arduino reading the flute and sending 
+corresponding MIDI commands. And while it does sounds nice the LEDs on the flute takes care that 
+it also "looks" nice.
