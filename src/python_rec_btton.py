@@ -4,20 +4,27 @@ import pyaudio  #to record and play audio
 import wave     #to read or write .wav files 
 import sys
 import time
+
 com_port=argv[1]
+
+if(len(argv)<1):
+    print("Usage- python %s COM_PORT"%(argv[0]))
+    exit(0)
+
 print "Using COM port- " + com_port
-ser = serial.Serial(com_port, 9600)#setting up the serialcommuication b/w python and COM port
-print "press butoon once to record audio:"
+ser = serial.Serial(com_port, 9600) #setting up the serialcommuication b/w python and COM port
+print "Press button once to record audio:"
 prevcount=0
-def record_audio():#function to record audio from laptop or microphone
-        CHUNK = 1024#we'll read 1 chunk of size 1024 from stream of digital stram of audio signal
+
+def record_audio():                 #function to record audio from laptop or microphone
+        CHUNK = 1024                #we'll read 1 chunk of size 1024 from stream of digital stram of audio signal
         FORMAT = pyaudio.paInt16
-        CHANNELS = 2#stereo mode
-        RATE = 44100#sample rate..frequency at which we talk=20hz to 20000khz we'll use double of this freq 44.1khz for good sampling
-        RECORD_SECONDS = 10#we can set this value 
+        CHANNELS = 20000            #stereo mode
+        RATE = 44100                #sample rate..frequency at which we talk=20hz to 20000khz we'll use double of this freq 44.1khz for good sampling
+        RECORD_SECONDS = 10         #we can set this value 
         WAVE_OUTPUT_FILENAME = "apt.wav"
 
-        p = pyaudio.PyAudio()#setting up pyaudio
+        p = pyaudio.PyAudio()       #setting up pyaudio
 
         stream = p.open(format=FORMAT,
                 channels=CHANNELS,
@@ -47,11 +54,11 @@ def record_audio():#function to record audio from laptop or microphone
         stream.close()
         p.terminate()
 
-        wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')#opening a file in write mode('wb')
+        wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')  #opening a file in write mode('wb')
         wf.setnchannels(CHANNELS)
         wf.setsampwidth(p.get_sample_size(FORMAT))
         wf.setframerate(RATE)
-        wf.writeframes(b''.join(frames))#writing all the chunks present in frames list to wav file
+        wf.writeframes(b''.join(frames))            #writing all the chunks present in frames list to wav file
         wf.close()
 class AudioFile:
     chunk = 1024
@@ -83,17 +90,17 @@ while(1):
         count=int(count)
         if((count%2==1)and (prevcount!=count)):
                 record_audio()
-                print "press butoon once to play audio:"
+                print "Press button once to play audio:"
 
                 
         elif(count%2==0):
             if((count!=0) and (prevcount!=count)):
                 a = AudioFile("apt.wav")
-                print "playing audio..."
+                print "Playing audio...\n"
                 a.play()
                 a.close()
-                print "done"
-                print "press butoon once to record audio:"
+                print "Done\n"
+                print "Press button once to record audio:"
 
        
         prevcount=count

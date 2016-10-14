@@ -177,18 +177,14 @@ void loop(void)
   /* Get a new sensor event */ 
   sensors_event_t event; 
   accel.getEvent(&event);
-  xreading=map(event.acceleration.x,-11,11,0,127);
-  /* Display the results (acceleration is measured in m/s^2) */
-  //Serial.print("X: "); Serial.print(event.acceleration.x); Serial.print("  ");
-  //Serial.print("Y: "); Serial.print(event.acceleration.y); Serial.print("  ");
+  xreading=map(event.acceleration.x,-11,11,0,127);  //required as pitchbend takes 8 bit argument
+  
   //Serial.print("Z: "); Serial.print(event.acceleration.z); Serial.print("  ");Serial.println("m/s^2 ");
   
   if(digitalRead(lockpin)==LOW){
       count=count+1 ;
       zreading=event.acceleration.z;//value of z-acceleration when the button is pressed
   }
-  else
-      count=count;
      
      if(count%2==0)
       serialcomm(event.acceleration.z, xreading, count);
@@ -198,15 +194,13 @@ void loop(void)
         serialcomm(zreading,xreading,count);
       
       delay(400);
+      
    /* Arduino Packet Syntax:  "zvalue <space> xvalue <space> count <newline character> "
     Split() method was used in Python to generate a list "zvalue, xvalue, count"
     reading= ser.readline.rstrip().split()
     print reading 
     will give output "-10, 10, 2" 
     */
-    
-  
-
 }
 
 void serialcomm(int zvalue, int xvalue, int count)
