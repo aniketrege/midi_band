@@ -60,6 +60,7 @@ def record_audio():                 #function to record audio from laptop or mic
         wf.setframerate(RATE)
         wf.writeframes(b''.join(frames))            #writing all the chunks present in frames list to wav file
         wf.close()
+
 class AudioFile:
     chunk = 1024
 
@@ -85,7 +86,10 @@ class AudioFile:
         """ Graceful shutdown """ 
         self.stream.close()
         self.p.terminate()
+
+
 while(1):
+    
         count=ser.readline().rstrip()
         count=int(count)
         if((count%2==1)and (prevcount!=count)):
