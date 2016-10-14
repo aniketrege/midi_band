@@ -1,7 +1,7 @@
 /* Technites 2016
  *  MIDI Band 
  *  Instrument : Flute
- *  Author(s) : Everyone in the project
+ *  Author(s) : Vibhore Jain, Prabhanjan Mannari, MIDI Band Team
  *  Date : 09/10/2016
  */
 
