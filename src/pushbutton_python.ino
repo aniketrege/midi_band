@@ -4,9 +4,9 @@ pinMode(8,INPUT);
 Serial.begin(9600);
 }
 void loop() {
-  // put your main code here, to run repeatedly:
-Serial.println(digitalRead(8));
-//Serial.println(analogRead(A4));
-//Serial.println(analogRead(A5));
+  // put your main code here, to run repeatedl
+  if(digitalRead(8)==HIGH)
+  count++;
+Serial.println(count);
 
 }
