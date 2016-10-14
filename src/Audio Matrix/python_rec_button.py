@@ -8,14 +8,20 @@ from array import array
 from struct import pack
 from sys import byteorder
 import copy
+
+if(len(argv)<2):
+    print("Usage- python %s COM_PORT"%(argv[0]))
+    exit(0)
+
 com_port=argv[1]
 print "Using COM port- " + com_port
 ser = serial.Serial(com_port, 9600)#setting up the serialcommuication b/w python and COM port
-print "press butoon once to record audio:"
+print "Press button once to record audio:"
 prevcount=0
+
 def record_audio():
 
-        THRESHOLD = 500  # audio levels not normalised.
+        THRESHOLD = 500 # audio levels not normalised.
         CHUNK_SIZE = 1024
         SILENT_CHUNKS = 3 * 44100 / 1024  # about 3sec
         FORMAT = pyaudio.paInt16
@@ -109,7 +115,7 @@ def record_audio():
         if __name__ == '__main__':
             print("Wait in silence to begin recording; wait in silence to terminate")
             record_to_file('demo.wav')
-            print("done - result written to demo.wav")
+            print("Done - result written to demo.wav")
 
 class AudioFile:
     chunk = 1024
@@ -141,19 +147,21 @@ while(1):
         count=int(count)
         if((count%2==1)and (prevcount!=count)):
                 record_audio()
-                print "press butoon once to play audio:"
+                print "Press button once to play audio:"
 
                 
         elif(count%2==0):
             if((count!=0) and (prevcount!=count)):
                 a = AudioFile("demo.wav")
-                print "playing audio..."
+                print "Playing audio..."
                 a.play()
                 a.close()
-                print "done"
-                print "press butoon once to record audio:"
+                print "Done"
+                print "Press button once to record audio:"
 
        
         prevcount=count
+
+
 
 
