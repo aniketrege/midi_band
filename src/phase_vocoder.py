@@ -22,7 +22,12 @@ def sound_stretch(infile, stretching_factor, outfile):
 
 
     # read input and get the timescale factor
-    (sr,signalin) = loadfile(infile)
+    (sr,signal) = loadfile(infile)
+    if(len(signal[0]) == 2):
+        signal2 = []
+        for i,j in signal:
+            signal2.append(i)
+        signalin = np.array(signal2)
     L = len(signalin)
     tscale = float(stretching_factor)
     # signal blocks for processing and output
@@ -30,8 +35,10 @@ def sound_stretch(infile, stretching_factor, outfile):
     out = zeros(N, dtype=complex)
     sigout = zeros(int(L/tscale)+N)
 
+    print signalin
+
     # max input amp, window
-    amp = max(signalin.all())
+    amp = max(signalin)
     win = hanning(N)
     p = 0
     pp = 0
