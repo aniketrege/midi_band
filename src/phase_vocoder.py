@@ -31,7 +31,7 @@ def sound_stretch(infile, stretching_factor, outfile):
     sigout = zeros(int(L/tscale)+N)
 
     # max input amp, window
-    amp = max(signalin)
+    amp = max(signalin.all())
     win = hanning(N)
     p = 0
     pp = 0
@@ -54,9 +54,9 @@ def sound_stretch(infile, stretching_factor, outfile):
         p += H*tscale
     return sr, array(amp*sigout/max(sigout), dtype='int16')
 
-infile  = "../test/phase_vocoder/piano.wav"
+infile  = "../test/phase_vocoder/hello.wav"
 stretching_factor = 1
-outfile = "../test/phase_vocoder/piano"
+outfile = "../test/phase_vocoder/hello"
 
 for i in range(1,13):
     if(i==3 or i==7 or i==11):
