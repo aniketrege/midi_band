@@ -62,7 +62,7 @@ for i in range(1,13):
     if(i==3 or i==7 or i==11):
         continue
     sr, signal = sound_stretch(infile, (1/pow(2,i/12.0)), outfile)
-    #sr = sr*pow(2,i/12.0)
+    sr = sr*pow(2,i/12.0)
     wavfile.write(outfile+str(i)+".wav", sr, signal)
 
 
