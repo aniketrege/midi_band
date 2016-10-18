@@ -191,6 +191,9 @@ class AudioFile:
         """ Graceful shutdown """ 
         self.stream.close()
         self.p.terminate()
+
+
+        
 prevcount=[0,0,0,0,0,0,0,0,0]
 prev_note=0
 k=0
@@ -200,6 +203,14 @@ drum_notes=[]
 master_count=0;
 file_array=["1.wav","2.wav","3.wav","4.wav","5.wav","6.wav","7.wav","8.wav","9.wav"]
 frequency_array=["f1.wav","f2.wav","f3.wav","f4.wav","f5.wav","f6.wav","f7.wav","f8.wav"]
+
+
+
+#*******************************        CONTROL         START           ***********************************************
+
+
+
+
 while(1):
         i=0
         output_from_ard=ser.readline().rstrip()

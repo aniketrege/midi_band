@@ -18,24 +18,21 @@
 #define C6 0x48
 #define Cs6 0x49
 
-#define n1 A0
-#define n2 A1
-#define n3 A2
-#define n4 A3
-#define n5 A4
-#define n6 A5
+#define n1 A5
+#define n2 A4
+#define n3 A3
+#define n4 A2
+#define n5 A1
+#define n6 A0
 
-#define led1 0 //bottom to up
-#define led2 1
-#define led3 11
-#define led4 10
-#define led5 4
-#define led6 7
+#define led1 3 //bottom to up
+#define led2 5
+#define led3 6
+#define led4 9
+#define led5 10
+#define led6 11
 
-#define pwm1 3 //left to right
-#define pwm2 5
-#define pwm3 6
-#define pwm4 9
+#define THRESHOLD 100
 
 int drum=12;
 int c;
@@ -47,6 +44,7 @@ int chmax=14;
 int flag_channel=0; //flag for channel switch
 int flag_drum=0;
 int arr[6]={0,0,0,0,0,0};
+int led[6]={0,0,0,0,0,0};
 const int size_of_i=6;
 int i=0;
 int note[size_of_i][6]= { {0x4C,D5,E5,F5,G5,A5a} , {C5,C5,G5,G5,A5a,A5a} , {F5,F5,E5,E5,D5,D5} , {C5,G5,C6,C5,As5,A5a} , {C5,G5,C6,C5,As5,A5a} , {C4,Cs4,D4,E4,C6,Cs6} }    ;
@@ -78,12 +76,9 @@ void setup() {
    pinMode(led5,OUTPUT);
    pinMode(led6,OUTPUT);
    
-   pinMode(pwm1,OUTPUT);    
-   pinMode(pwm2,OUTPUT);    
-   pinMode(pwm3,OUTPUT);
-   pinMode(pwm4,OUTPUT);
    
-   midi(0xE0,0x00,0x40);
+   
+  // midi(0xE0,0x00,0x40);
    
 }
 
@@ -107,18 +102,20 @@ void loop() {
       }  
 //----------------------------------------------------------
 //__________________________________________________________*/
-Serial.println(analogRead(n1));
 
-if ((analogRead(n1)>950)&&(arr[0]==0))
+
+if ((analogRead(n1)>THRESHOLD)&&(arr[0]==0))
   {
       midi((0x90 | ch),C5,0x55);
       arr[0]=1;
       while(1)
-      {
-          if (analogRead(n1)<950)
+      {   led[0]=map(analogRead(n1),0,1023,255,0);
+          analogWrite(led1,led[0]);
+          if (analogRead(n1)<THRESHOLD)
               {
                   arr[0]=0;
                   midi((0x80 | ch),C5,0x55);
+                  digitalWrite(led1,0);
                   break;
               }
           
@@ -133,16 +130,19 @@ if ((analogRead(n1)>950)&&(arr[0]==0))
 
 //__________________________________________________________
 
-if ((analogRead(n2)>950)&&(arr[1]==0))
+if ((analogRead(n2)>THRESHOLD)&&(arr[1]==0))
   {
       midi(0x90,D5,0x55);
       arr[1]=1;
       while(1)
       {
-          if (analogRead(n2)<950)
+        led[1]=map(analogRead(n2),0,1023,255,0);
+          analogWrite(led2,led[1]);
+          if (analogRead(n2)<THRESHOLD)
               {
                   arr[1]=0;
                   midi(0x80,D5,0x55);
+                  digitalWrite(led2,0);
                   break;
               }
           
@@ -156,16 +156,19 @@ if ((analogRead(n2)>950)&&(arr[1]==0))
 //--------------------------------
 //__________________________________________________________
 
-if ((analogRead(n3)>950)&&(arr[2]==0))
+if ((analogRead(n3)>THRESHOLD)&&(arr[2]==0))
   {
       midi((0x90 | ch),E5,0x55);
       arr[2]=1;
       while(1)
-      {
-          if (analogRead(n3)<950)
+      { 
+        led[2]=map(analogRead(n3),0,1023,255,0);
+          analogWrite(led3,led[2]);
+          if (analogRead(n3)<THRESHOLD)
               {
                   arr[2]=0;
                   midi((0x80 | ch),E5,0x55);
+                  digitalWrite(led3,0);
                   break;
               }
           
@@ -179,16 +182,18 @@ if ((analogRead(n3)>950)&&(arr[2]==0))
 //--------------------------------
 //__________________________________________________________
 
-if ((analogRead(n4)>950)&&(arr[3]==0))
-  {
+if ((analogRead(n4)>THRESHOLD)&&(arr[3]==0))
+  {led[3]=map(analogRead(n4),0,1023,255,0);
+          analogWrite(led4,led[3]);
       midi((0x90 | ch),F5,0x55);
       arr[3]=1;
       while(1)
       {
-          if (analogRead(n4)<950)
+          if (analogRead(n4)<THRESHOLD)
               {
                   arr[3]=0;
                   midi((0x80 | ch),F5,0x55);
+                  digitalWrite(led4,0);
                   break;
               }
           
@@ -202,16 +207,19 @@ if ((analogRead(n4)>950)&&(arr[3]==0))
 //--------------------------------
 //__________________________________________________________
 
-if ((analogRead(n5)>950)&&(arr[4]==0))
+if ((analogRead(n5)>THRESHOLD)&&(arr[4]==0))
   {
       midi((0x90 | ch),G5,0x55);
       arr[4]=1;
       while(1)
       {
-          if (analogRead(n5)<950)
+        led[4]=map(analogRead(n5),0,1023,255,0);
+          analogWrite(led5,led[4]);
+          if (analogRead(n5)<THRESHOLD)
               {
                   arr[4]=0;
                   midi((0x80 | ch),G5,0x55);
+                  digitalWrite(led5,0);
                   break;
               }
           
@@ -225,16 +233,18 @@ if ((analogRead(n5)>950)&&(arr[4]==0))
 //--------------------------------
 //__________________________________________________________
 
-if ((analogRead(n6)>950)&&(arr[5]==0))
+if ((analogRead(n6)>THRESHOLD)&&(arr[5]==0))
   {
+    led[5]=map(analogRead(n6),0,1023,255,0);
       midi((0x90 | ch),A5a,0x55);
       arr[5]=1;
       while(1)
       {
-          if (analogRead(n6)<950)
+          if (analogRead(n6)<THRESHOLD)
               {
                   arr[5]=0;
                   midi((0x80 | ch),A5a,0x55);
+                  digitalWrite(led6,0);
                   break;
               }
           
@@ -244,7 +254,9 @@ if ((analogRead(n6)>950)&&(arr[5]==0))
           //midi((0xB0 | ch),ctr,);
           
       }
-  }  }
+  }  
+  
+}
 //--------------------------------
 /*
   if(drum==LOW&&flag_drum==1 ){

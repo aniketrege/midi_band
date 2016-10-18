@@ -60,6 +60,7 @@ while(1):
             if(lower<=zreading<upper):
                 if(off==1):
                     midi_out.send_message([OFF,pan_note,100])       #if mode switched from pan, switch off pan note
+                    off=0
                 if(previousnote!=int(current_note)):                 #if note is different from last, switch it off
                     on=1
                     midi_out.send_message([OFF,previousnote,100])
@@ -96,4 +97,4 @@ while(1):
 
 #Terminal Commands:
 #cd C:\Users\Aniket\Documents\Projects\Technites\Glove 2.0 (navigate to where this code is locally)
-#python ADXLmodified.py COM3 60 62 65 67 72
+    #python ADXLmodified.py COM3 60 62 65 67 72

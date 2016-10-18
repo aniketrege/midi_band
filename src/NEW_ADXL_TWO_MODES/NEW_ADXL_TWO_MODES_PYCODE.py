@@ -54,7 +54,8 @@ while(1):
     #print count
     for (lower,upper,index) in decision_boundary:
         current_note= (notes[index])
-        if(count1%2==0&&count2%2==0): 
+
+        if(count1%2==0 and count2%2==0): 
 
         #********       MODE ONE        ********
 
@@ -73,7 +74,8 @@ while(1):
                     midi_out.send_message([OFF, int(current_note),100])            #switch off current note
                     time.sleep(0.1)
                 break   
-        elif(count1%2=0):                                       
+
+        elif(count1%2==1 and count2%2!=1):                                       
 
         #********       MODE TWO        ********
 
@@ -89,8 +91,10 @@ while(1):
                 midi_out.send_message([PAN,10,xreading])                       #CC: Pan 
                 time.sleep(0.1)
                 break
+
+
         #********       MODE THREE     ********
-        elif(count2%2):
+        elif(count2%2==1 and count1%2!=1):
             if(lower<=zreading<upper):
                 print "holding note- " + str((current_note))
                 print "controller cc--noise--"
@@ -103,6 +107,8 @@ while(1):
                 midi_out.send_message([CC_msg,12,xreading])                       #CC: Pan 
                 time.sleep(0.1)
                 break
+
+
         else:
             if(lower<=zreading<upper):
                 if(off==1):

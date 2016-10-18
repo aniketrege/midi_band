@@ -142,6 +142,8 @@ class AudioFile:
         """ Graceful shutdown """ 
         self.stream.close()
         self.p.terminate()
+
+        
 while(1):
         count=ser.readline().rstrip()
         count=int(count)
