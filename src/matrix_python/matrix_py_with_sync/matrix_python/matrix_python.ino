@@ -36,8 +36,7 @@ void loop() {
    }
   
 
-  
-  
+
   if(digitalRead(select)==HIGH)
     sel=sel+1;
   if(digitalRead(master)==HIGH)
@@ -50,19 +49,28 @@ void loop() {
     digitalWrite(led2,HIGH);
   if(mode%5==4)
     digitalWrite(led3,HIGH);
+    if(mode==5)
+    mode=0;
+    if(sel==2)
+    sel=0;
 Serial.print(mode);
 Serial.print(" " );
 Serial.print(sel);
 Serial.print(" " );
 for(i=0;i<9;i++)
-{ if(digitalRead(i+2)==HIGH)
+{ if(digitalRead(i+2)==HIGH&&sel%2!=0)
+{
   count[i]++;
+  if(count[i]==2)
+  count[i]=0;
+}
+  if(sel%2==0)
+  count[i]=0;
   Serial.print(count[i]);
   Serial.print(" " );
 }
 
 Serial.print("\n");
-delay(300);
-    
+   delay(300);
 }
 

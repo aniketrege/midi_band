@@ -55,8 +55,8 @@ def record_audio(filename):
             return copy.deepcopy(data_all[_from:(_to + 1)])
 
         def record():
-            """Record a word or words from the microphone and 
-            return the data as an array of signed shorts."""
+            "Record a word or words from the microphone and 
+            return the data as an array of signed shorts."
 
             p = pyaudio.PyAudio()
             stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, output=True, frames_per_buffer=CHUNK_SIZE)

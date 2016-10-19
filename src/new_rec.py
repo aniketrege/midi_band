@@ -6,9 +6,9 @@ import pyaudio
 import wave
 import sys
 
-THRESHOLD = 500  # audio levels not normalised.
+THRESHOLD =500
 CHUNK_SIZE = 1024
-SILENT_CHUNKS = 3 * 44100 / 1024  # about 3sec
+SILENT_CHUNKS = 2* 44100 / 1024  # about 3sec
 FORMAT = pyaudio.paInt16
 FRAME_MAX_VALUE = 2 ** 15 - 1
 NORMALIZE_MINUS_ONE_dB = 10 ** (-1.0 / 20)

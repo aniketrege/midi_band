@@ -17,12 +17,14 @@ from scipy.io import wavfile
 midi_out = rtmidi.MidiOut()
 midi_out.open_port(0)
 
-
+ON=0x90
+OFF=0x80
 count=[0,0,0,0,0,0,0,0,0]
 prevcount=[0,0,0,0,0,0,0,0,0]
 prev_note=0
 k=0
 j=0
+l=1
 d=1
 w=0
 i=0
@@ -30,13 +32,12 @@ drum_notes=[]
 master_count=0;
 sel_count=0;
 file_array=["1.wav","2.wav","3.wav","4.wav","5.wav","6.wav","7.wav","8.wav","9.wav"]
-frequency_array=["f1.wav","f2.wav","f3.wav","f4.wav","f5.wav","f6.wav","f7.wav","f8.wav"]
+frequency_array=["f1.wav","f2.wav","f3.wav","f4.wav","f5.wav","f6.wav","f7.wav","f8.wav","f9.wav"]
 
 
-if(len(argv)<2):
-    print("Usage- python %s COM_PORT "%(argv[0]))
+if(len(argv)<3):
+    print("Usage- python %s COM_PORT note1 [note2 note3 ...]"%(argv[0]))
     exit(0)
-
 
 com_port=argv[1]
 print "Using COM port- " + com_port
@@ -44,9 +45,9 @@ print "Using COM port- " + com_port
 notes=[]
 
 if(len(argv)>2):
-    for note in argv[2:]:       # append all notes (params) passed in command line
+    for note in argv[2:]:               # append all notes (params) passed in command line
         notes.append(note)
-ser = serial.Serial(com_port, 9600)#setting up the serialcommuication b/w python and COM port
+ser = serial.Serial(com_port, 9600)     #setting up the serialcommuication b/w python and COM port
 
 def loadfile(infile):
     return wavfile.read(infile)
@@ -96,104 +97,51 @@ def sound_stretch(infile, stretching_factor, outfile):
         p += H*tscale
     return sr, array(amp*sigout/max(sigout), dtype='int16')
 
-
-
-def record_audio(filename):
-
-        THRESHOLD = 500 # audio levels not normalised.
-        CHUNK_SIZE = 1024
-        SILENT_CHUNKS = 3 * 44100 / 1024  # about 3sec
+def record_audio(filename):#function to record audio from laptop or microphone
+        CHUNK = 1024#we'll read 1 chunk of size 1024 from stream of digital stram of audio signal
         FORMAT = pyaudio.paInt16
-        FRAME_MAX_VALUE = 2 ** 15 - 1
-        NORMALIZE_MINUS_ONE_dB = 10 ** (-1.0 / 20)
-        RATE = 44100
-        CHANNELS = 2
-        TRIM_APPEND = RATE / 4
+        CHANNELS = 2#stereo mode
+        RATE = 44100#sample rate..frequency at which we talk=20hz to 20000khz we'll use double of this freq 44.1khz for good sampling
+        RECORD_SECONDS = 2#we can set this value 
+        WAVE_OUTPUT_FILENAME = filename
 
-        def is_silent(data_chunk):
-            """Returns 'True' if below the 'silent' threshold"""
-            return max(data_chunk) < THRESHOLD
+        p = pyaudio.PyAudio()#setting up pyaudio
 
-        def normalize(data_all):
-            """Amplify the volume out to max -1dB"""
-            # MAXIMUM = 16384
-            normalize_factor = (float(NORMALIZE_MINUS_ONE_dB * FRAME_MAX_VALUE)/ max(abs(i) for i in data_all))
-                                                                                        
+        stream = p.open(format=FORMAT,
+                channels=CHANNELS,
+                rate=RATE,
+                input=True,
+                frames_per_buffer=CHUNK)
+        
+        if (1):
+                print "* Recording audio..."
 
-            r = array('h')
-            for i in data_all:
-                r.append(int(i * normalize_factor))
-            return r
+        frames = []#list to store all the chunks of audio
+        """
+                we have samplerate=(number of samples)per second=441000
+                samplerate*recorseconds-----this gives total number of samples
+                number of chunks=number of samples/chunksize
+                in our case number of chunks=215
+                hence we neet to read or run for loop 215 time to read 215 chunks of audio
+        """
+        for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+                data = stream.read(CHUNK)
+                frames.append(data)#appending all the chunks in to a list called frames
 
-        def trim(data_all):
-            _from = 0
-            _to = len(data_all) - 1
-            for i, b in enumerate(data_all):
-                if abs(b) > THRESHOLD:
-                    _from = max(0, i - TRIM_APPEND)
-                    break
+        
+        print "* done\n" 
 
-            for i, b in enumerate(reversed(data_all)):
-                if abs(b) > THRESHOLD:
-                    _to = min(len(data_all) - 1, len(data_all) - 1 - i + TRIM_APPEND)
-                    break
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
 
-            return copy.deepcopy(data_all[_from:(_to + 1)])
+        wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')#opening a file in write mode('wb')
+        wf.setnchannels(CHANNELS)
+        wf.setsampwidth(p.get_sample_size(FORMAT))
+        wf.setframerate(RATE)
+        wf.writeframes(b''.join(frames))#writing all the chunks present in frames list to wav file
+        wf.close()
 
-        def record():
-            """Record a word or words from the microphone and return the data as an array of signed shorts."""
-
-            p = pyaudio.PyAudio()
-            stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, output=True, frames_per_buffer=CHUNK_SIZE)
-
-            silent_chunks = 0
-            audio_started = False
-            data_all = array('h')
-
-            while True:
-                # little endian, signed short
-                data_chunk = array('h', stream.read(CHUNK_SIZE))
-                if byteorder == 'big':
-                    data_chunk.byteswap()
-                data_all.extend(data_chunk)
-
-                silent = is_silent(data_chunk)
-
-                if audio_started:
-                    if silent:
-                        silent_chunks += 1
-                        if silent_chunks > SILENT_CHUNKS:
-                            break
-                    else: 
-                        silent_chunks = 0
-                elif not silent:
-                    audio_started = True              
-
-            sample_width = p.get_sample_size(FORMAT)
-            stream.stop_stream()
-            stream.close()
-            p.terminate()
-
-            data_all = trim(data_all)  # we trim before normalize as threshhold applies to un-normalized wave (as well as is_silent() function)
-            data_all = normalize(data_all)
-            return sample_width, data_all
-
-        def record_to_file(path):
-            "Records from the microphone and outputs the resulting data to 'path'"
-            sample_width, data = record()
-            data = pack('<' + ('h' * len(data)), *data)
-
-            wave_file = wave.open(path, 'wb')
-            wave_file.setnchannels(CHANNELS)
-            wave_file.setsampwidth(sample_width)
-            wave_file.setframerate(RATE)
-            wave_file.writeframes(data)
-            wave_file.close()
-
-        if __name__ == '__main__':
-            print("Wait in silence to begin recording; wait in silence to terminate")
-            record_to_file(filename)
-            print("done - result written to ")+str(filename)
 
 
 class AudioFile:
@@ -226,27 +174,24 @@ class AudioFile:
 
 #*******************************        CONTROL         START           *************************************
 
-
-
 IN=0
-print "k"
-while(1):
-        print "kamal"   
+while(1):  
         i=0
-
+        
         output_from_ard =  ser.readline().rstrip()
         counts = output_from_ard.split()
         master_count=int(counts[0].rstrip())
         sel_count=int(counts[1].rstrip()) 
-        for i in range(2,11):
-                count[i-2]=int(counts[i].rstrip()) 
-                print count[i-2]     
         print master_count
-        print sel_count      
+        print sel_count
+        for i in range(2,11):
+                count[i-2]=int(counts[i].rstrip())  #count[i] is the number of times ith button has been pressed
+        print count
         if(sel_count%2==0):
             if(master_count%5==0 and IN==0):
                 print("Press master button to select modes:")
                 IN=1
+
 
             
     #****************************           MODE ONE            *********************************************
@@ -264,17 +209,17 @@ while(1):
                                     record_audio(file_array[k])
                                     j=j+1
                                     if(j==9):
-                                            print "all the 9 buttons were mapped to their respective audio_recordings"
+                                            print "All 9 buttons were mapped to their respective audio_recordings"
                                             prevcount[k]=count[k]
                                             continue
                                             
                     if(j==9):
                             if((count[k]!=0) and (prevcount[k]!=count[k])):
                                     a = AudioFile(file_array[k])
-                                    print "playing audio..."
+                                    print "Playing audio..."
                                     a.play()
                                     a.close()
-                                    print "done"
+                                    print "Done"
                     prevcount[k]=count[k]
 
 
@@ -284,36 +229,41 @@ while(1):
             if(master_count%5==2):
                 if(d==1):
                     prevcount=[0,0,0,0,0,0,0,0,0]
-                d=2
-                print "press button one in 3*3 matrix to start recording:"
-                if(count[0]!=prevcount[0] or count[0]==1):
-                    record_audio("f.wav")
-                    w=1
-                if(w==1):
-                    stretching_factor = 1
-                    infile="f.wav"
-                    k=0
-                    for i in range(1,13):
-                        if(i==3 or i==7 or i==11):
-                            continue
-                        k=k+1
-                        outfile=frequency_array[k-1]
-                        sr, signal = sound_stretch(infile, (1/pow(2,i/12.0)), outfile)
-                        sr = sr*pow(2,i/12.0)
-                        wavfile.write(outfile, sr, signal)
-                    print "all 8 buttons mapped to 8 different frequencies of recorded audio"
-                    print "press buttons to play..."
-                    for i in range(2,9):
-                        if(prevcount[i]!=count[i]):
-                                k=i
-                                break
-                        if((count[k]!=0) and (prevcount[k]!=count[k])):
-                                a = AudioFile(frequency_array[k])
-                                print "playing audio..."
-                                a.play()
-                                a.close()
-                                print "done"
-                    prevcount[k]=count[k]
+                    if(l==1):
+                        print "press button one in 3*3 matrix to start recording:"
+                        l=2
+                    if(count[0]!=prevcount[0] or count[0]==1):
+                        record_audio("f.wav")
+                        w=1
+                        d=2
+                    if(w==1):
+                        stretching_factor = 1
+                        infile="f.wav"
+                        k=0
+                        for i in range(1,13):
+                            if(i==3 or i==7 or i==11):
+                                continue
+                            outfile=frequency_array[k]
+                            k=k+1
+                            sr, signal = sound_stretch(infile, (1/pow(2,i/12.0)), outfile)
+                            sr = sr*pow(2,i/12.0)
+                            wavfile.write(outfile, sr, signal)
+                        print "all 8 buttons mapped to 8 different frequencies of recorded audio"
+                        print "press buttons to play..."
+                        for i in range(0,9):
+                            prevcount[i]=count[i]
+                k=0
+                for i in range(1,9):
+                    if(prevcount[i]!=count[i]):
+                            k=i
+                            break
+                if(k!=0):
+                        a = AudioFile(frequency_array[k-1])
+                        print "playing audio..."
+                        a.play()
+                        a.close()
+                        print "done"
+                prevcount[k]=count[k]
 
 
 
@@ -332,10 +282,12 @@ while(1):
                 current_note=notes[k]
                 if(prev_note!=current_note and prev_note!=0):
                     midi_out.send_message([OFF, int(prev_note),100])
-                if(count[k]==prevcount[k] and count[k]%2==1):
+                if(count[k]!=prevcount[k] and count[k]%2==1):
                     print "playing note..."+str(current_note)
                     midi_out.send_message([ON, int(current_note),100])
-                prev_note=current_note    
+                prev_note=current_note 
+                prevcount[k]=count[k]   
+
 
 
         #****************************           MODE FOUR          *********************************************       
@@ -362,4 +314,4 @@ while(1):
 
 
             
-#python python_3_3_matrix_4modes.py COM3
+#python python_3_3_matrix_4modes.py COM3 60 62 64 66 68 70
