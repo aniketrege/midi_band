@@ -35,6 +35,13 @@ on=1
 pan_note=0
 previousnote=0
 
+def midi(cmd,data1,data2):
+
+    Ser.write(cmd);
+    Ser.write(data1);
+    Ser.write(data2);
+
+
 for i in range(0,no_bins):
     decision_boundary.append((-11+(bin_size*i),-11+(bin_size*(i+1)),i))  #list of all boundaries according to number of notes
 print "number of bins- " + str(no_bins)
@@ -88,7 +95,7 @@ while(1):
                        midi_out.send_message([ON, int(current_note),100])     #This will be switched off only if mode changes
                 time.sleep(0.3)
                 off=1
-                midi_out.send_message([PAN,10,xreading])                       #CC: Pan 
+                midi_out.send_message([CC_msg,10,xreading])                       #CC: Pan 
                 time.sleep(0.1)
                 break
 
@@ -124,8 +131,7 @@ while(1):
                     time.sleep(0.3)
                     midi_out.send_message([OFF, int(current_note),100])            #switch off current note
                     time.sleep(0.1)
-                break   
-    
+                break 
             
 
 

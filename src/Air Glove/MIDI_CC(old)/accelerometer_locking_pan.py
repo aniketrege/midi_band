@@ -35,7 +35,7 @@ print "bin size- " + str(bin_size)
 print "Decision Boundaries- " + str(decision_boundary)
 time.sleep(1)
 while(1):
-    #ser.write('t')  #activate Arduino to send adxl values
+    ser.write('t')  #activate Arduino to send adxl values
     reading = ser.readline().rstrip()
     reading=reading.split()
     zreading=int(reading[0].rstrip())

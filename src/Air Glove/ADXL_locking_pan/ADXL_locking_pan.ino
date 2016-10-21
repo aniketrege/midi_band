@@ -22,6 +22,7 @@ Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(12345);
 #define A5a 0x45
 #define As5 0x46
 #define B5 0x47
+
 #define C6 0x48
 #define Cs6 0x49
 
@@ -211,4 +212,5 @@ void serialcomm(int zvalue, int xvalue, int count)
       Serial.print(" ");
       Serial.println(count);
 }
+
 

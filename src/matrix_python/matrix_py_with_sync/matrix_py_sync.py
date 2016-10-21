@@ -28,7 +28,8 @@ l=1
 d=1
 w=0
 i=0
-drum_notes=[]
+drum_notes=[27, 66, 69, 77, 63, 89, 111, 68, 76]
+#["D#1","F#4","A4","F5","D#4","F6","D#8","G#4","A#9"]#change notes= names with hex numbers
 master_count=0;
 sel_count=0;
 file_array=["1.wav","2.wav","3.wav","4.wav","5.wav","6.wav","7.wav","8.wav","9.wav"]
@@ -102,7 +103,7 @@ def record_audio(filename):#function to record audio from laptop or microphone
         FORMAT = pyaudio.paInt16
         CHANNELS = 2#stereo mode
         RATE = 44100#sample rate..frequency at which we talk=20hz to 20000khz we'll use double of this freq 44.1khz for good sampling
-        RECORD_SECONDS = 2#we can set this value 
+        RECORD_SECONDS = 5#we can set this value 
         WAVE_OUTPUT_FILENAME = filename
 
         p = pyaudio.PyAudio()#setting up pyaudio
@@ -264,6 +265,7 @@ while(1):
                         a.close()
                         print "done"
                 prevcount[k]=count[k]
+                prevnote=0
 
 
 
@@ -276,13 +278,13 @@ while(1):
                     prevcount=[0,0,0,0,0,0,0,0,0]
                 d=2
                 for i in range(0,9):
-                            if((count[i]%2==1)and (prevcount[i]!=count[i])):
+                            if(prevcount[i]!=count[i]):
                                     k=i
                                     break
                 current_note=notes[k]
                 if(prev_note!=current_note and prev_note!=0):
                     midi_out.send_message([OFF, int(prev_note),100])
-                if(count[k]!=prevcount[k] and count[k]%2==1):
+                if(count[k]!=prevcount[k]):
                     print "playing note..."+str(current_note)
                     midi_out.send_message([ON, int(current_note),100])
                 prev_note=current_note 
@@ -293,15 +295,16 @@ while(1):
         #****************************           MODE FOUR          *********************************************       
                 
 
+            
             if(master_count%5==4):
                 if(d==1):
                     prevcount=[0,0,0,0,0,0,0,0,0]
                 d=2
                 for i in range(0,9):
-                            if((count[i]%2==1)and (prevcount[i]!=count[i])):
+                            if((prevcount[i]!=count[i])):
                                     k=i
                                     break
-                current_note=drum_notes[k]
+                current_note=int(drum_notes[k])
                 if(prevnote!=current_note and prev_note!=0):
                     midi_out.send_message([OFF, int(prev_note),100])
                 if(count[k]==prevcount[k] and count[k]%2==1):
@@ -314,4 +317,4 @@ while(1):
 
 
             
-#python python_3_3_matrix_4modes.py COM3 60 62 64 66 68 70
+#python matrix_py_sync.py COM3 60 62 64 66 68 70

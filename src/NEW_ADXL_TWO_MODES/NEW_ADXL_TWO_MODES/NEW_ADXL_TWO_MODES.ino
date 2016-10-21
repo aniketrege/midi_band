@@ -35,8 +35,8 @@ int z;
 int flag=0;
 int zreading;
 int xreading;
-int count1=0;
-int count2=0;
+int counta=0;
+int countb=0;
 
 void displaySensorDetails(void)
 {
@@ -150,6 +150,7 @@ void setup(void)
 #endif
   Serial.begin(9600);
   pinMode(lockpin1,INPUT);
+  pinMode(lockpin2,INPUT);
   //Serial.println("Accelerometer Test"); Serial.println("");
   
   /* Initialise the sensor */
@@ -185,20 +186,25 @@ void loop(void)
   //Serial.print("Z: "); Serial.print(event.acceleration.z); Serial.print("  ");Serial.println("m/s^2 ");
   
   if(digitalRead(lockpin1)==HIGH){
-      count1=count1+1 ;
+      counta=counta+1 ;
       zreading=event.acceleration.z;//value of z-acceleration when the button is pressed
   }
   if(digitalRead(lockpin2)==HIGH){
-      count2=count2+1 ;
+      countb=countb+1 ;
       zreading=event.acceleration.z;//value of z-acceleration when the button is pressed
   }
      
-     if(count1%2==0&&count2%2==0))
-      serialcomm(event.acceleration.z, xreading, count1,count2);
+     if(counta%2==0&&countb%2==0)
+      serialcomm(event.acceleration.z, xreading, counta,countb);
       //if switch is not pressed or pressed even number of times then send the values according to accelerometer z value
-     else
-     serialcomm(zreading,xreading,count1,count2);
-      
+      else if(counta%2==1 && countb%2==1){countb=0;
+     serialcomm(zreading,xreading,counta,countb);}
+      else if(countb%2==0&&counta%2==1){
+      serialcomm(zreading,xreading,counta,countb);}
+      else{
+        serialcomm(zreading,xreading,counta,countb);}
+        
+     
       delay(400);
       
    /* Arduino Packet Syntax:  "zvalue <space> xvalue <space> count <newline character> "
@@ -209,14 +215,14 @@ void loop(void)
     */
 }
 
-void serialcomm(int zvalue, int xvalue, int count1,int count2)
+void serialcomm(int zvalue, int xvalue, int counta,int countb)
 {
       Serial.print(zvalue); 
       Serial.print(" ");
       Serial.print(xvalue);
       Serial.print(" ");
-      Serial.print(count1);
+      Serial.print(counta);
       Serial.print(" ");
-       Serial.println(count2);
+       Serial.println(countb);
 }
 

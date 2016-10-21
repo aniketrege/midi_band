@@ -71,6 +71,13 @@ for(i=0;i<9;i++)
 }
 
 Serial.print("\n");
-   delay(300);
+   delay(250);
+}
+
+void midi(int cmd, int data1, int data2)
+{
+Serial.write(cmd);
+Serial.write(data1);
+Serial.write(data2);
 }
 

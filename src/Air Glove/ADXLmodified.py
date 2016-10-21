@@ -97,4 +97,4 @@ while(1):
 
 #Terminal Commands:
 #cd C:\Users\Aniket\Documents\Projects\Technites\Glove 2.0 (navigate to where this code is locally)
-    #python ADXLmodified.py COM3 60 62 65 67 72
+    #python ADXLmodified.py COM9 60 62 65 67 72
