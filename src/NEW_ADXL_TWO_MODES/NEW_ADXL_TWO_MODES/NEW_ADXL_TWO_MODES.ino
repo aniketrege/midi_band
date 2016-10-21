@@ -149,8 +149,8 @@ void setup(void)
   while (!Serial); 
 #endif
   Serial.begin(9600);
-  pinMode(lockpin1,INPUT);
-  pinMode(lockpin2,INPUT);
+  pinMode(lockpin1,INPUT_PULLUP);
+  pinMode(lockpin2,INPUT_PULLUP);
   //Serial.println("Accelerometer Test"); Serial.println("");
   
   /* Initialise the sensor */
@@ -181,15 +181,14 @@ void loop(void)
   /* Get a new sensor event */ 
   sensors_event_t event; 
   accel.getEvent(&event);
-  xreading=map(event.acceleration.x,-11,11,0,127);  //required as pitchbend takes 8 bit argument
-  
+  xreading=constrain(map(event.acceleration.x,-11,11,1,126), 0, 127);  //required as pitchbend takes 8 bit argument
   //Serial.print("Z: "); Serial.print(event.acceleration.z); Serial.print("  ");Serial.println("m/s^2 ");
   
-  if(digitalRead(lockpin1)==HIGH){
+  if(digitalRead(lockpin1)==LOW){
       counta=counta+1 ;
       zreading=event.acceleration.z;//value of z-acceleration when the button is pressed
   }
-  if(digitalRead(lockpin2)==HIGH){
+  if(digitalRead(lockpin2)==LOW){
       countb=countb+1 ;
       zreading=event.acceleration.z;//value of z-acceleration when the button is pressed
   }

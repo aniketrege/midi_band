@@ -283,10 +283,12 @@ while(1):
                                     break
                 current_note=notes[k]
                 if(prev_note!=current_note and prev_note!=0):
-                    midi_out.send_message([OFF, int(prev_note),100])
+                    msg=Message("note_off", channel=0,int(prev_note), velocity=100)
+                    outport.send(msg)    
                 if(count[k]!=prevcount[k]):
                     print "playing note..."+str(current_note)
-                    midi_out.send_message([ON, int(current_note),100])
+                    msg=Message("note_on", channel=0,int(current_note), velocity=100)
+                    outport.send(msg)
                 prev_note=current_note 
                 prevcount[k]=count[k]   
 
@@ -306,11 +308,14 @@ while(1):
                                     break
                 current_note=int(drum_notes[k])
                 if(prevnote!=current_note and prev_note!=0):
-                    midi_out.send_message([OFF, int(prev_note),100])
+                    msg=Message("note_off", channel=0,int(prev_note), velocity=100)
+                    outport.send(msg) 
                 if(count[k]==prevcount[k] and count[k]%2==1):
                     print "playing note..."+str(current_note)
-                    midi_out.send_message([ON, int(current_note),100])
-                prev_note=current_note    
+                    msg=Message("note_on", channel=0,int(current_note), velocity=100)
+                    outport.send(msg)
+                prev_note=current_note
+                prevcount[k]=count[k]    
 
 
 
