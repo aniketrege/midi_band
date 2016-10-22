@@ -32,7 +32,7 @@
 #define led5 10
 #define led6 11
 
-#define THRESHOLD 100
+#define THRESHOLD 500
 
 int drum=12;
 int c;

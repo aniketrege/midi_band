@@ -13,7 +13,20 @@ import rtmidi_python as rtmidi
 from scipy import *
 from pylab import *
 from scipy.io import wavfile
+from pygame import *
+from mido import *
+from mido import Message
 
+import mido 
+import pygame 
+import time 
+
+
+mido.set_backend("mido.backends.pygame")
+names = mido.get_output_names()
+print names
+
+outport = mido.open_output(names[3])
 midi_out = rtmidi.MidiOut()
 midi_out.open_port(0)
 
@@ -283,11 +296,11 @@ while(1):
                                     break
                 current_note=notes[k]
                 if(prev_note!=current_note and prev_note!=0):
-                    msg=Message("note_off", channel=0,int(prev_note), velocity=100)
+                    msg=Message("note_off", channel=0,note=int(prev_note), velocity=100)
                     outport.send(msg)    
                 if(count[k]!=prevcount[k]):
                     print "playing note..."+str(current_note)
-                    msg=Message("note_on", channel=0,int(current_note), velocity=100)
+                    msg=Message("note_on", channel=0,note=int(current_note), velocity=100)
                     outport.send(msg)
                 prev_note=current_note 
                 prevcount[k]=count[k]   
@@ -303,19 +316,19 @@ while(1):
                     prevcount=[0,0,0,0,0,0,0,0,0]
                 d=2
                 for i in range(0,9):
-                            if((prevcount[i]!=count[i])):
+                            if(prevcount[i]!=count[i]):
                                     k=i
                                     break
-                current_note=int(drum_notes[k])
-                if(prevnote!=current_note and prev_note!=0):
-                    msg=Message("note_off", channel=0,int(prev_note), velocity=100)
-                    outport.send(msg) 
-                if(count[k]==prevcount[k] and count[k]%2==1):
+                current_note=drum_notes[k]
+                if(prev_note!=current_note and prev_note!=0):
+                    msg=Message("note_off", channel=0,note=int(prev_note), velocity=100)
+                    outport.send(msg)    
+                if(count[k]!=prevcount[k]):
                     print "playing note..."+str(current_note)
-                    msg=Message("note_on", channel=0,int(current_note), velocity=100)
+                    msg=Message("note_on", channel=0,note=int(current_note), velocity=100)
                     outport.send(msg)
-                prev_note=current_note
-                prevcount[k]=count[k]    
+                prev_note=current_note 
+                prevcount[k]=count[k]       
 
 
 

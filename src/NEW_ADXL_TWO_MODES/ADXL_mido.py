@@ -87,10 +87,7 @@ while(1):
                     outport.send(msg)       #this will play note corresponding to whichever bin input is in
                     on=0
                     time.sleep(0.3)
-                    msg=Message("note_off", channel=0,note=int(current_note), velocity=100)
-                    outport.send(msg)          #switch off current note
-                    time.sleep(0.1)
-                break   
+                    break   
 
         elif(count1%2==1 and count2%2!=1):                                       
 
@@ -113,7 +110,7 @@ while(1):
 
 
         #********       MODE THREE     ********
-        elif(count2%2==1 and count1%2!=1):
+        elif(count2%2==1 and count1%1!=1):
             if(lower<=zreading<upper):
                 print "holding note- " + str((current_note))
                 print "controller cc--noise--"
@@ -146,9 +143,6 @@ while(1):
                     outport.send(msg)       #this will play note corresponding to whichever bin input is in
                     on=0
                     time.sleep(0.3)
-                    msg=Message("note_off", channel=0,note=int(current_note), velocity=100)
-                    outport.send(msg)          #switch off current note
-                    time.sleep(0.1)
                 break   
             
 
@@ -157,4 +151,4 @@ while(1):
 
 #Terminal Commands:
 #cd C:\Users\Aniket\Documents\Projects\Technites\Glove 2.0 (navigate to where this code is locally)
-#python ADXLmodified.py COM3 60 62 65 67 72
+#python ADXL_mido.py COM9 60 62 65 67 72
