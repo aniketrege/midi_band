@@ -71,7 +71,7 @@ for(i=0;i<9;i++)
 }
 
 Serial.print("\n");
-   delay(250);
+   delay(10);
 }
 
 void midi(int cmd, int data1, int data2)

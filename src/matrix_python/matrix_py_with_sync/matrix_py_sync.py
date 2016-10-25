@@ -320,9 +320,9 @@ while(1):
                                     k=i
                                     break
                 current_note=drum_notes[k]
-                if(prev_note!=current_note and prev_note!=0):
-                    msg=Message("note_off", channel=0,note=int(prev_note), velocity=100)
-                    outport.send(msg)    
+                #if(prev_note!=current_note and prev_note!=0):
+                    #msg=Message("note_off", channel=0,note=int(prev_note), velocity=100)
+                    #outport.send(msg)    
                 if(count[k]!=prevcount[k]):
                     print "playing note..."+str(current_note)
                     msg=Message("note_on", channel=0,note=int(current_note), velocity=100)
